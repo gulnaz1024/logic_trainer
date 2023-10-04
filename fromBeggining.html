@@ -26,12 +26,7 @@
 
     #expression {
       font-size: 24px;
-      margin-bottom: 20px;
-    }
-
-    #answer {
-      font-size: 20px;
-      margin-top: 10px;
+      margin-bottom: 10px;
     }
 
     #new-expression-button {
@@ -43,7 +38,6 @@
 
 <div id="expression-container">
   <div id="expression"></div>
-  <div id="answer"></div>
   <button id="new-expression-button" class="btn btn-primary" onclick="generateNewExpression()">New Expression</button>
 </div>
 
@@ -60,8 +54,7 @@
     const selectedExpression = expressions[randomIndex];
     const answer = evaluateExpression(selectedExpression);
 
-    document.getElementById('expression').innerHTML = selectedExpression;
-    document.getElementById('answer').innerHTML = `Correct Answer: ${answer}`;
+    document.getElementById('expression').innerHTML = `${selectedExpression} = ${answer}`;
   }
 
   function evaluateExpression(expression) {
