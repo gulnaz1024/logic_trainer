@@ -48,6 +48,21 @@
       cursor: pointer;
       color: blue;
     }
+
+    #score-bar {
+      height: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    #score-fill {
+      height: 100%;
+      background-color: #28a745; /* Green color for the fill */
+      transition: width 0.3s ease-in-out;
+      width: 0%; /* Initialize to 0% */
+    }
   </style>
 </head>
 <body>
@@ -56,21 +71,31 @@
   <div id="expression"></div>
   <div id="level"></div>
   <div id="score"></div>
+  <div id="score-bar">
+    <div id="score-fill"></div>
+  </div>
   <button id="check-button" class="btn btn-primary" onclick="checkAnswer()">Check</button>
 </div>
 
 <script>
   const levels = [
-    ['1 + 1', '0 + 0', '0 + 1'],
-    ['1 * 1', '1 * 0', '0 * 1'],
-    ['1 + 1 * 1', '1 + 0 * 0', '0 + 0 * 0'],
-    ['(1 + 1) * 1', '(1 + 0) * 0', '(0 + 1) * 0']
+    ['0', '!1', '!!0', '!!!1'],
+    ['0', '!1', '!!0', '!!!1'],
+    ['0', '!1', '!!0', '!!!1'],
+    ['0', '!1', '!!0', '!!!1'],
+    ['0', '!1', '!!0', '!!!1'],
+    ['0', '!1', '!!0', '!!!1'],
+    ['0', '!1', '!!0', '!!!1'],
+    ['0', '!1', '!!0', '!!!1', '!!!!0']
   ];
 
-  let currentLevel = 4;
+  let currentLevel = 1;
   let clickCount = 0;
   let score = 0;
   let wrongAnswers = 0;
+
+  // Initial setup when the page loads
+  generateNewExpression();
 
   function generateNewExpression() {
     clickCount++;
@@ -94,6 +119,9 @@
 
     document.getElementById('expression').innerHTML = `${selectedExpression} = <span id="question-mark" onclick="startToggle()">?</span>`;
     document.getElementById('score').innerHTML = `Score: ${score}`;
+
+    // Update the score bar
+    updateScoreBar();
   }
 
   function startToggle() {
@@ -113,6 +141,13 @@
     } else if (currentAnswer === '1') {
       questionMark.textContent = '0';
     }
+  }
+
+  function updateScoreBar() {
+    const scoreBar = document.getElementById('score-bar');
+    const scoreFill = document.getElementById('score-fill');
+    const percentage = (score / 5) * 100;
+    scoreFill.style.width = `${Math.min(100, percentage)}%`;
   }
 
   function checkAnswer() {
@@ -151,9 +186,13 @@
     // Display the updated score
     document.getElementById('score').innerHTML = `Score: ${score}`;
 
-    // Check if user needs to drop down two levels
+    // Update the score bar
+    updateScoreBar();
+
+    // Check if the user needs to drop down two levels
     if (wrongAnswers === 3) {
       currentLevel = Math.max(1, currentLevel - 2);
+      score = 0; // Reset score when the level is lowered
       document.getElementById('level').innerHTML = `Level ${currentLevel}`;
       wrongAnswers = 0; // Reset wrong answers counter after dropping down
     }
@@ -161,9 +200,6 @@
     // Generate a new expression after checking the answer
     generateNewExpression();
   }
-
-  // Initial expression setup when the page loads
-  generateNewExpression();
 </script>
 
 </body>
