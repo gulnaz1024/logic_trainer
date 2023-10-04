@@ -21,13 +21,6 @@
       margin-bottom: 20px;
     }
 
-    .btn-option {
-      font-size: 18px;
-      width: 70px;
-      height: 70px;
-      margin: 10px;
-    }
-
     #progress-bar {
       margin-top: 20px;
     }
@@ -41,9 +34,8 @@
   <div id="question" class="text-center"></div>
 
   <div class="text-center">
-    <button class="btn btn-primary btn-option" onclick="answer(1)">?</button>
-    <button class="btn btn-primary btn-option" onclick="answer(0)">?</button>
-    <button class="btn btn-success" onclick="checkAnswer()">OK</button>
+    <button class="btn btn-success" onclick="toggleAnswer()">?</button>
+    <button class="btn btn-primary" onclick="checkAnswer()">OK</button>
   </div>
 
   <div id="progress-bar" class="progress">
@@ -65,6 +57,7 @@
   let correctAnswers = 0;
   let wrongAnswers = 0;
   let score = 0;
+  let isAnswerShown = false;
 
   function generateQuestion(level) {
     let expressions;
@@ -91,44 +84,49 @@
   }
 
   function updateUI() {
-    $('#question').text(generateQuestion(currentLevel));
+    $('#question').text(generateQuestion(currentLevel) + ' = ?');
     $('#progress-bar-inner').css('width', (correctAnswers / 5) * 100 + '%');
     $('#level-info').text(`Level: ${currentLevel}`);
     $('#remaining-levels').text(`Levels Remaining: ${5 - correctAnswers}`);
     $('#score').text(`Score: ${score}`);
   }
 
-  function answer(value) {
-    $('#question').data('answer', value);
+  function toggleAnswer() {
+    isAnswerShown = !isAnswerShown;
     updateUI();
   }
 
   function checkAnswer() {
-    const correctAnswer = evaluateExpression($('#question').text());
+    if (isAnswerShown) {
+      const correctAnswer = evaluateExpression(generateQuestion(currentLevel));
 
-    if ($('#question').data('answer') == correctAnswer) {
-      correctAnswers++;
-      score++;
-    } else {
-      wrongAnswers++;
-      score = Math.max(0, score - 1);
-    }
-
-    if (wrongAnswers >= 3) {
-      if (currentLevel > 2) {
-        currentLevel -= 2;
+      if ($('#question').data('answer') == correctAnswer) {
+        correctAnswers++;
+        score++;
       } else {
-        currentLevel = 1;
+        wrongAnswers++;
+        score = Math.max(0, score - 1);
       }
-      wrongAnswers = 0;
-    }
 
-    if (correctAnswers >= 5) {
-      currentLevel++;
-      correctAnswers = 0;
-    }
+      if (wrongAnswers >= 3) {
+        if (currentLevel > 2) {
+          currentLevel -= 2;
+        } else {
+          currentLevel = 1;
+        }
+        wrongAnswers = 0;
+      }
 
-    updateUI();
+      if (correctAnswers >= 5) {
+        currentLevel++;
+        correctAnswers = 0;
+      }
+
+      isAnswerShown = false;
+      updateUI();
+    } else {
+      alert('Please choose an answer before clicking OK.');
+    }
   }
 
   function evaluateExpression(expression) {
