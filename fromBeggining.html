@@ -27,6 +27,7 @@
     #expression {
       font-size: 24px;
       margin-bottom: 10px;
+      user-select: none; /* Prevent text selection */
     }
 
     #level {
@@ -39,7 +40,7 @@
       margin-top: 10px;
     }
 
-    #new-expression-button {
+    #check-button {
       font-size: 18px;
     }
 
@@ -55,7 +56,7 @@
   <div id="expression"></div>
   <div id="level"></div>
   <div id="answer"></div>
-  <button id="new-expression-button" class="btn btn-primary" onclick="generateNewExpression()">New Expression</button>
+  <button id="check-button" class="btn btn-primary" onclick="generateNewExpression()">Check</button>
 </div>
 
 <script>
