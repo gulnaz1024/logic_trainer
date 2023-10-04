@@ -16,6 +16,7 @@ for (let i = 0; i < expression.length; i++) {
   }
 }
 let jsLogicalExpression = convertedExpression.join("");
+let answer = eval(jsLogicalExpression);
 
 console.log("Original Expression:");
 console.log(expression, " = ", eval(jsLogicalExpression));

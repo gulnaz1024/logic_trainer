@@ -29,6 +29,11 @@
       margin-bottom: 10px;
     }
 
+    #level {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
     #new-expression-button {
       font-size: 18px;
     }
@@ -38,18 +43,34 @@
 
 <div id="expression-container">
   <div id="expression"></div>
+  <div id="level"></div>
   <button id="new-expression-button" class="btn btn-primary" onclick="generateNewExpression()">New Expression</button>
 </div>
 
 <script>
-  const expressions = [
-    '1 + 1',
-    '1 + 0',
-    '0 + (0 * 1)',
-    '!1'
+  const levels = [
+    ['1 + 1', '0 + 0', '0 + 1'],
+    ['1 * 1', '1 * 0', '0 * 1'],
+    ['1 + 1 * 1', '1 + 0 * 0', '0 + 0 * 0'],
+    ['(1 + 1) * 1', '(1 + 0) * 0', '(0 + 1) * 0']
   ];
 
+  let currentLevel = 1;
+  let clickCount = 0;
+
   function generateNewExpression() {
+    clickCount++;
+
+    if (clickCount >= 5) {
+      clickCount = 0;
+      currentLevel++;
+      if (currentLevel > levels.length) {
+        currentLevel = 1;
+      }
+      document.getElementById('level').innerHTML = `Level ${currentLevel}`;
+    }
+
+    const expressions = levels[currentLevel - 1];
     const randomIndex = Math.floor(Math.random() * expressions.length);
     const selectedExpression = expressions[randomIndex];
     const answer = evaluateExpression(selectedExpression);
