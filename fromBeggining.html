@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Logical Expressions Simulator</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #expression-container {
+      text-align: center;
+      padding: 20px;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #expression {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    #new-expression-button {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="expression-container">
+  <div id="expression"></div>
+  <button id="new-expression-button" class="btn btn-primary" onclick="generateNewExpression()">New Expression</button>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  const expressions = [
+    '1 + 1',
+    '1 + 0',
+    '0 + 1'
+  ];
+
+  function generateNewExpression() {
+    const randomIndex = Math.floor(Math.random() * expressions.length);
+    const selectedExpression = expressions[randomIndex];
+    document.getElementById('expression').innerHTML = selectedExpression;
+  }
+</script>
+
+</body>
+</html>
