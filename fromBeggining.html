@@ -35,9 +35,9 @@
       margin-bottom: 10px;
     }
 
-    #answer {
+    #score {
       font-size: 20px;
-      margin-top: 10px;
+      margin-bottom: 10px;
     }
 
     #check-button {
@@ -55,8 +55,8 @@
 <div id="expression-container">
   <div id="expression"></div>
   <div id="level"></div>
-  <div id="answer"></div>
-  <button id="check-button" class="btn btn-primary" onclick="generateNewExpression()">Check</button>
+  <div id="score"></div>
+  <button id="check-button" class="btn btn-primary" onclick="checkAnswer()">Check</button>
 </div>
 
 <script>
@@ -69,6 +69,7 @@
 
   let currentLevel = 1;
   let clickCount = 0;
+  let score = 0;
 
   function generateNewExpression() {
     clickCount++;
@@ -87,7 +88,7 @@
     const selectedExpression = expressions[randomIndex];
 
     document.getElementById('expression').innerHTML = `${selectedExpression} = <span id="question-mark" onclick="startToggle()">?</span>`;
-    document.getElementById('answer').innerHTML = '';
+    document.getElementById('score').innerHTML = `Score: ${score}`;
   }
 
   function startToggle() {
@@ -107,6 +108,44 @@
     } else if (currentAnswer === '1') {
       questionMark.textContent = '0';
     }
+  }
+
+  function checkAnswer() {
+    const expressionText = document.getElementById('expression').innerText.split('=')[0].trim();
+    const questionMark = document.getElementById('question-mark');
+    const userAnswer = questionMark.textContent;
+    
+    // Use your expression evaluation script here
+    let convertedExpression = [];
+    for (let i = 0; i < expressionText.length; i++) {
+      if (expressionText[i] === "1") {
+        convertedExpression.push("true");
+      } else if (expressionText[i] === "0") {
+        convertedExpression.push("false");
+      } else if (expressionText[i] === "!") {
+        convertedExpression.push("!");
+      } else if (expressionText[i] === "×" || expressionText[i] === "*") {
+        convertedExpression.push("&&");
+      } else if (expressionText[i] === "+") {
+        convertedExpression.push("||");
+      } else {
+        convertedExpression.push(expressionText[i]);
+      }
+    }
+    let jsLogicalExpression = convertedExpression.join("");
+    let correctAnswer = eval(jsLogicalExpression);
+
+    if (userAnswer === String(+correctAnswer)) {
+      score++;
+    } else {
+      score--;
+    }
+
+    // Display the updated score
+    document.getElementById('score').innerHTML = `Score: ${score}`;
+
+    // Generate a new expression after checking the answer
+    generateNewExpression();
   }
 
   // Initial expression setup when the page loads
