@@ -101,13 +101,21 @@
     clickCount++;
 
     if (score >= 5) {
-      score = 0;
-      currentLevel++;
-      wrongAnswersInLevel = 0; // Reset wrong answers counter for the new level
-      if (currentLevel > levels.length) {
-        currentLevel = 1;
-      }
-      document.getElementById('level').innerHTML = `Level ${currentLevel}`;
+      // Update the score bar to 100% before raising the level
+      updateScoreBar(100);
+      
+      setTimeout(() => {
+        score = 0;
+        currentLevel++;
+        wrongAnswersInLevel = 0; // Reset wrong answers counter for the new level
+        if (currentLevel > levels.length) {
+          currentLevel = 1;
+        }
+        document.getElementById('level').innerHTML = `Level ${currentLevel}`;
+        
+        // Generate a new expression after raising the level
+        generateNewExpression();
+      }, 700); // Delay for 0.7 seconds before raising the level
     }
 
     if (clickCount >= 5) {
@@ -122,7 +130,7 @@
     document.getElementById('score').innerHTML = `Score: ${score}`;
 
     // Update the score bar
-    updateScoreBar();
+    updateScoreBar((score / 5) * 100);
   }
 
   function startToggle() {
@@ -144,10 +152,9 @@
     }
   }
 
-  function updateScoreBar() {
+  function updateScoreBar(percentage) {
     const scoreBar = document.getElementById('score-bar');
     const scoreFill = document.getElementById('score-fill');
-    const percentage = (score / 5) * 100;
     scoreFill.style.width = `${Math.min(100, percentage)}%`;
   }
 
