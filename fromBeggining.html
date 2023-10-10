@@ -89,10 +89,10 @@
     ['0', '!1', '!!0', '!!!1', '!!!!0']
   ];
 
-  let currentLevel = 1;
+  let currentLevel = 6;
   let clickCount = 0;
   let score = 0;
-  let wrongAnswers = 0;
+  let wrongAnswersInLevel = 0;
 
   // Initial setup when the page loads
   generateNewExpression();
@@ -103,6 +103,7 @@
     if (score >= 5) {
       score = 0;
       currentLevel++;
+      wrongAnswersInLevel = 0; // Reset wrong answers counter for the new level
       if (currentLevel > levels.length) {
         currentLevel = 1;
       }
@@ -177,24 +178,20 @@
 
     if (userAnswer === String(+correctAnswer)) {
       score++;
-      wrongAnswers = 0; // Reset wrong answers counter for correct answers
     } else {
       score -= 2; // Wrong answer deducts 2 points
-      wrongAnswers++;
+      wrongAnswersInLevel++;
     }
 
     // Display the updated score
     document.getElementById('score').innerHTML = `Score: ${score}`;
 
-    // Update the score bar
-    updateScoreBar();
-
     // Check if the user needs to drop down two levels
-    if (wrongAnswers === 3) {
+    if (wrongAnswersInLevel === 3) {
       currentLevel = Math.max(1, currentLevel - 2);
       score = 0; // Reset score when the level is lowered
       document.getElementById('level').innerHTML = `Level ${currentLevel}`;
-      wrongAnswers = 0; // Reset wrong answers counter after dropping down
+      wrongAnswersInLevel = 0; // Reset wrong answers counter after dropping down
     }
 
     // Generate a new expression after checking the answer
