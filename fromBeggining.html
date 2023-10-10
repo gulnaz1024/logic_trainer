@@ -35,7 +35,7 @@
       margin-bottom: 10px;
     }
 
-    #score {
+    #scores {
       font-size: 20px;
       margin-bottom: 10px;
     }
@@ -70,7 +70,7 @@
 <div id="expression-container">
   <div id="expression"></div>
   <div id="level"></div>
-  <div id="score"></div>
+  <div id="scores"></div>
   <div id="score-bar">
     <div id="score-fill"></div>
   </div>
@@ -91,7 +91,8 @@
 
   let currentLevel = 6;
   let clickCount = 0;
-  let score = 0;
+  let localScore = 0;
+  let globalScore = 0;
   let wrongAnswersInLevel = 0;
   const scoresNeededForLevelUp = 5; // Replace 5 with the desired number of scores needed for level-up
 
@@ -101,12 +102,12 @@
   function generateNewExpression() {
     clickCount++;
 
-    if (score >= scoresNeededForLevelUp) {
+    if (localScore >= scoresNeededForLevelUp) {
       // Update the score bar to 100% before raising the level
       updateScoreBar(100);
       
       setTimeout(() => {
-        score = 0;
+        localScore = 0;
         currentLevel++;
         wrongAnswersInLevel = 0; // Reset wrong answers counter for the new level
         if (currentLevel > levels.length) {
@@ -128,10 +129,10 @@
     const selectedExpression = expressions[randomIndex];
 
     document.getElementById('expression').innerHTML = `${selectedExpression} = <span id="question-mark" onclick="startToggle()">?</span>`;
-    document.getElementById('score').innerHTML = `Score: ${score}`;
+    document.getElementById('scores').innerHTML = `Scores: ${globalScore}`;
 
     // Update the score bar
-    updateScoreBar((score / scoresNeededForLevelUp) * 100);
+    updateScoreBar((localScore / scoresNeededForLevelUp) * 100);
   }
 
   function startToggle() {
@@ -185,19 +186,21 @@
     let correctAnswer = eval(jsLogicalExpression);
 
     if (userAnswer === String(+correctAnswer)) {
-      score++;
+      localScore++;
+      globalScore++;
     } else {
-      score -= 2; // Wrong answer deducts 2 points
-      wrongAnswersInLevel++;
+      localScore -= 2; // Wrong answer deducts 2 points
+      globalScore -= 2; // Deduct global score on wrong answer
+      localScore = Math.max(0, localScore); // Ensure local score doesn't go below 0
     }
 
-    // Display the updated score
-    document.getElementById('score').innerHTML = `Score: ${score}`;
+    // Display the updated global score
+    document.getElementById('scores').innerHTML = `Scores: ${globalScore}`;
 
     // Check if the user needs to drop down two levels
     if (wrongAnswersInLevel === 3) {
       currentLevel = Math.max(1, currentLevel - 2);
-      score = 0; // Reset score when the level is lowered
+      localScore = 0; // Reset local score when the level is lowered
       document.getElementById('level').innerHTML = `Level ${currentLevel}`;
       wrongAnswersInLevel = 0; // Reset wrong answers counter after dropping down
     }
