@@ -93,6 +93,7 @@
   let clickCount = 0;
   let score = 0;
   let wrongAnswersInLevel = 0;
+  const scoresNeededForLevelUp = 5; // Replace 5 with the desired number of scores needed for level-up
 
   // Initial setup when the page loads
   generateNewExpression();
@@ -100,7 +101,7 @@
   function generateNewExpression() {
     clickCount++;
 
-    if (score >= 5) {
+    if (score >= scoresNeededForLevelUp) {
       // Update the score bar to 100% before raising the level
       updateScoreBar(100);
       
@@ -130,7 +131,7 @@
     document.getElementById('score').innerHTML = `Score: ${score}`;
 
     // Update the score bar
-    updateScoreBar((score / 5) * 100);
+    updateScoreBar((score / scoresNeededForLevelUp) * 100);
   }
 
   function startToggle() {
