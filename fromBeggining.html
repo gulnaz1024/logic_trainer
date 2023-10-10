@@ -22,6 +22,7 @@
       border-radius: 5px;
       background-color: #fff;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      margin-bottom: 20px;
     }
 
     #expression {
@@ -69,7 +70,10 @@
 <body>
 
 <div id="expression-container">
-  <div id="expression"></div>
+  <div class="expression" id="expression1"></div>
+  <div class="expression" id="expression2"></div>
+  <div class="expression" id="expression3"></div>
+
   <div id="level"></div>
   <div id="scores"></div>
   <div id="score-bar">
@@ -126,18 +130,31 @@
     }
 
     const expressions = levels[currentLevel - 1];
-    const randomIndex = Math.floor(Math.random() * expressions.length);
-    const selectedExpression = expressions[randomIndex];
+    const randomIndexes = getRandomIndexes(expressions.length, 3);
+    for (let i = 0; i < 3; i++) {
+      const selectedExpression = expressions[randomIndexes[i]];
+      document.getElementById(`expression${i + 1}`).innerHTML = `${selectedExpression} = <span class="question-mark" onclick="startToggle(${i + 1})">?</span>`;
+    }
 
-    document.getElementById('expression').innerHTML = `${selectedExpression} = <span id="question-mark" onclick="startToggle()">?</span>`;
     document.getElementById('scores').innerHTML = `Scores: ${globalScore}`;
 
     // Update the score bar
     updateScoreBar((localScore / scoresNeededForLevelUp) * 100);
   }
 
-  function startToggle() {
-    const questionMark = document.getElementById('question-mark');
+  function getRandomIndexes(max, count) {
+    const indexes = [];
+    while (indexes.length < count) {
+      const index = Math.floor(Math.random() * max);
+      if (!indexes.includes(index)) {
+        indexes.push(index);
+      }
+    }
+    return indexes;
+  }
+
+  function startToggle(index) {
+    const questionMark = document.querySelector(`#expression${index} .question-mark`);
     questionMark.textContent = '0'; // Initialize to 0
     questionMark.onclick = function() {
       toggleAnswer();
@@ -145,7 +162,7 @@
   }
 
   function toggleAnswer() {
-    const questionMark = document.getElementById('question-mark');
+    const questionMark = document.querySelector('.question-mark');
     const currentAnswer = questionMark.textContent;
 
     if (currentAnswer === '0') {
@@ -162,8 +179,8 @@
   }
 
   function checkAnswer() {
-    const expressionText = document.getElementById('expression').innerText.split('=')[0].trim();
-    const questionMark = document.getElementById('question-mark');
+    const expressionText = document.querySelector('.expression').innerText.split('=')[0].trim();
+    const questionMark = document.querySelector('.question-mark');
     const userAnswer = questionMark.textContent;
     
     // Use your expression evaluation script here
