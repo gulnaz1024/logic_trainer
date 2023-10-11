@@ -74,7 +74,6 @@
 <div id="expression-container">
   <div class="expression" id="expression1"></div>
   <div class="expression" id="expression2"></div>
-  <div class="expression" id="expression3"></div>
 
   <div id="level"></div>
   <div id="scores"></div>
@@ -103,7 +102,7 @@
   let localScore = 0;
   let globalScore = 0;
   let wrongAnswersInLevel = 0;
-  const scoresNeededForLevelUp = 5;
+  const scoresNeededForLevelUp = 4;
 
   function generateRandomExpression() {
     let variables = [];
@@ -174,15 +173,15 @@
     let expressions;
     if (currentLevel <= 7) {
       const currentLevelExpressions = levels[currentLevel - 1];
-      const randomIndexes = getRandomUniqueIndexes(currentLevelExpressions.length, 3);
-      expressions = [currentLevelExpressions[randomIndexes[0]], currentLevelExpressions[randomIndexes[1]], currentLevelExpressions[randomIndexes[2]]];
+      const randomIndexes = getRandomUniqueIndexes(currentLevelExpressions.length, 2);
+      expressions = [currentLevelExpressions[randomIndexes[0]], currentLevelExpressions[randomIndexes[1]]];
     } else {
-      expressions = [generateRandomExpression(), generateRandomExpression(), generateRandomExpression()];
+      expressions = [generateRandomExpression(), generateRandomExpression()];
     }
 
     document.getElementById('level').innerHTML = `Level: ${currentLevel}`; // Display the current level immediately on first load
 
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < expressions.length; i++) {
       const selectedExpression = expressions[i];
       document.getElementById(`expression${i + 1}`).innerHTML = `${selectedExpression} = <span class="question-mark" onclick="startToggle(${i + 1})">?</span>`;
     }
@@ -230,7 +229,7 @@
   function checkAnswer() {
     let correctAnswers = [];
     let userAllAnswers = [];
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= 2; i++) {
       const expressionText = document.querySelector(`#expression${i}`).innerText.split('=')[0].trim();
       const questionMark = document.querySelector(`#expression${i} .question-mark`);
       const userAnswer = questionMark.textContent;
