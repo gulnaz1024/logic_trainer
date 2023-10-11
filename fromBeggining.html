@@ -98,6 +98,13 @@
     []
   ];
 
+  let currentLevel = 1;
+  let clickCount = 0;
+  let localScore = 0;
+  let globalScore = 0;
+  let wrongAnswersInLevel = 0;
+  const scoresNeededForLevelUp = 5;
+
   function generateRandomExpression() {
     let variables = [];
     let operators = [];
@@ -155,32 +162,10 @@
     return expression.join(" ");
   }
 
-  let currentLevel = 1;
-  let clickCount = 0;
-  let localScore = 0;
-  let globalScore = 0;
-  let wrongAnswersInLevel = 0;
-  const scoresNeededForLevelUp = 2;
-
   generateNewExpression();
 
   function generateNewExpression() {
-    clickCount++;
-
-    if (localScore >= scoresNeededForLevelUp) {
-      updateScoreBar(100);
-
-      setTimeout(() => {
-        localScore = 0;
-        currentLevel++;
-        wrongAnswersInLevel = 0;
-        if (currentLevel > levels.length) {
-          currentLevel = 1;
-        }
-        document.getElementById('level').innerHTML = `Level ${currentLevel}`;
-        generateNewExpression();
-      }, 700);
-    }
+    clickCount++;    
 
     if (clickCount >= 5) {
       clickCount = 0;
@@ -290,7 +275,30 @@
       wrongAnswersInLevel = 0;
     }
 
-    generateNewExpression();
+    let isSameLevel = true;
+    if (localScore >= scoresNeededForLevelUp) {
+      updateScoreBar(100);
+      isSameLevel = false;
+
+      setTimeout(() => {        
+        localScore = 0;
+        currentLevel++;
+        wrongAnswersInLevel = 0;        
+        if (currentLevel > levels.length) {
+          currentLevel = 1;
+        }
+
+        document.getElementById('level').innerHTML = `Level ${currentLevel}`;
+        //generateNewExpression();
+        updateScoreBar(0);
+        generateNewExpression(); 
+      }, 700);           
+    }
+
+    // To avoid additional generating of expressions before raising the level.
+    if (isSameLevel) {
+      generateNewExpression();
+    }
   }
 </script>
 
