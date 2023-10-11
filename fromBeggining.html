@@ -31,8 +31,13 @@
       user-select: none;/* Prevent text selection */
     }
 
-    #level,
     #scores {
+      font-size: 18px;
+      margin-bottom: 10px;
+      margin-top: 10px;
+    }
+
+    #level {
       font-size: 18px;
       margin-bottom: 10px;
       margin-top: 35px;
@@ -88,15 +93,74 @@
     ['0', '!1', '!!0', '!!!1'],
     ['0', '!1', '!!0', '!!!1'],
     ['0', '!1', '!!0', '!!!1'],
-    ['0', '!1', '!!0', '!!!1', '!!!!0']
+    [],
+    [],
+    []
   ];
+
+  function generateRandomExpression() {
+    let variables = [];
+    let operators = [];
+    let expressionLength = 4;
+
+    let bracketsPresenceProbability = Math.floor(Math.random() * 16); // set to 15 if brackets are not needed
+    let openedBracket = -1;
+    let closedBracket = -1;
+    let not_before_bracket = Math.floor(Math.random() * 2); // set to 0 if "NOT" before brackets is not needed
+
+    for (let i = 0; i < expressionLength; i++) {
+      let variable = String(Math.floor(Math.random() * 2));
+      let notOperator = Math.floor(Math.random() * 2);
+      if (bracketsPresenceProbability < 11) {
+        openedBracket = Math.floor(Math.random() * (expressionLength - 1));
+        let shiftBracket = 0;
+        if (openedBracket === 0) {
+          shiftBracket = 1; // to avoid that situation: (0 + 0 + 0)
+        }
+        closedBracket = Math.floor(Math.random() * (expressionLength - 1 - openedBracket - shiftBracket) + openedBracket + 1);
+        bracketsPresenceProbability = 15; // to not generate brackets position again
+      }
+      if (notOperator === 1) {
+        variable = "!" + variable;
+      }
+      if (i === openedBracket) {
+        variable = "(" + variable;
+        if (not_before_bracket === 1) {
+          variable = "!" + variable;
+        }
+      }
+      if (i === closedBracket) {
+        variable = variable + ")";
+      }
+      variables.push(variable);
+    }
+
+    // random operators
+    for (let i = 0; i < expressionLength - 1; i++) {
+      let operator = Math.floor(Math.random() * 2);
+      if (operator === 0) {
+        operators.push("+");
+      } else {
+        operators.push("×");
+      }
+    }
+
+    // gathering expression
+    let expression = [];
+    for (let i = 0; i < expressionLength - 1; i++) {
+      expression.push(variables[i]);
+      expression.push(operators[i]);
+    }
+    expression.push(variables[expressionLength - 1]);
+    return expression.join(" ");
+  }
 
   let currentLevel = 1;
   let clickCount = 0;
   let localScore = 0;
   let globalScore = 0;
   let wrongAnswersInLevel = 0;
-  const scoresNeededForLevelUp = 5;
+  const scoresNeededForLevelUp = 2;
 
   generateNewExpression();
 
@@ -122,10 +186,17 @@
       clickCount = 0;
     }
 
-    const expressions = levels[currentLevel - 1];
-    const randomIndexes = getRandomIndexes(expressions.length, 3);
+    let expressions;
+    if (currentLevel <= 7) {
+      const currentLevelExpressions = levels[currentLevel - 1];
+      const randomIndexes = getRandomUniqueIndexes(currentLevelExpressions.length, 3);
+      expressions = [currentLevelExpressions[randomIndexes[0]], currentLevelExpressions[randomIndexes[1]], currentLevelExpressions[randomIndexes[2]]];
+    } else {
+      expressions = [generateRandomExpression(), generateRandomExpression(), generateRandomExpression()];
+    }
+
     for (let i = 0; i < 3; i++) {
-      const selectedExpression = expressions[randomIndexes[i]];
+      const selectedExpression = expressions[i];
       document.getElementById(`expression${i + 1}`).innerHTML = `${selectedExpression} = <span class="question-mark" onclick="startToggle(${i + 1})">?</span>`;
     }
 
@@ -133,7 +204,7 @@
     updateScoreBar((localScore / scoresNeededForLevelUp) * 100);
   }
 
-  function getRandomIndexes(max, count) {
+  function getRandomUniqueIndexes(max, count) {
     const indexes = [];
     while (indexes.length < count) {
       const index = Math.floor(Math.random() * max);
@@ -196,7 +267,7 @@
       }
       let jsLogicalExpression = convertedExpression.join("");
       let correctAnswer = eval(jsLogicalExpression);
-      correctAnswers.push(String(+correctAnswer));  
+      correctAnswers.push(String(+correctAnswer));
     }
 
     if (userAllAnswers.toString() === correctAnswers.toString()) {
@@ -222,7 +293,6 @@
     generateNewExpression();
   }
 </script>
-
 
 </body>
 </html>
