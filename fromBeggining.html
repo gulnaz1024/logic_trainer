@@ -180,6 +180,8 @@
       expressions = [generateRandomExpression(), generateRandomExpression(), generateRandomExpression()];
     }
 
+    document.getElementById('level').innerHTML = `Level: ${currentLevel}`; // Display the current level immediately on first load
+
     for (let i = 0; i < 3; i++) {
       const selectedExpression = expressions[i];
       document.getElementById(`expression${i + 1}`).innerHTML = `${selectedExpression} = <span class="question-mark" onclick="startToggle(${i + 1})">?</span>`;
@@ -235,19 +237,19 @@
       userAllAnswers.push(String(+userAnswer));
 
       let convertedExpression = [];
-      for (let j = 0; j < expressionText.length; j++) {
-        if (expressionText[j] === "1") {
+      for (let i = 0; i < expressionText.length; i++) {
+        if (expressionText[i] === "1") {
           convertedExpression.push("1");
-        } else if (expressionText[j] === "0") {
+        } else if (expressionText[i] === "0") {
           convertedExpression.push("0");
-        } else if (expressionText[j] === "!") {
+        } else if (expressionText[i] === "!") {
           convertedExpression.push("!");
-        } else if (expressionText[j] === "×" || expressionText[j] === "*") {
+        } else if (expressionText[i] === "×" || expressionText[i] === "*") {
           convertedExpression.push("&&");
-        } else if (expressionText[j] === "+") {
+        } else if (expressionText[i] === "+") {
           convertedExpression.push("||");
         } else {
-          convertedExpression.push(expressionText[j]);
+          convertedExpression.push(expressionText[i]);
         }
       }
       let jsLogicalExpression = convertedExpression.join("");
@@ -285,11 +287,11 @@
         currentLevel++;
         wrongAnswersInLevel = 0;        
         if (currentLevel > levels.length) {
+          alert("Good Job! You have finished all levels!");
           currentLevel = 1;
         }
 
-        document.getElementById('level').innerHTML = `Level ${currentLevel}`;
-        //generateNewExpression();
+        document.getElementById('level').innerHTML = `Level: ${currentLevel}`;
         updateScoreBar(0);
         generateNewExpression(); 
       }, 700);           
