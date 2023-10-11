@@ -91,35 +91,31 @@
     ['0', '!1', '!!0', '!!!1', '!!!!0']
   ];
 
-  let currentLevel = 6;
+  let currentLevel = 1;
   let clickCount = 0;
   let localScore = 0;
   let globalScore = 0;
   let wrongAnswersInLevel = 0;
-  const scoresNeededForLevelUp = 5; // Replace 5 with the desired number of scores needed for level-up
+  const scoresNeededForLevelUp = 5;
 
-  // Initial setup when the page loads
   generateNewExpression();
 
   function generateNewExpression() {
     clickCount++;
 
     if (localScore >= scoresNeededForLevelUp) {
-      // Update the score bar to 100% before raising the level
       updateScoreBar(100);
-      
+
       setTimeout(() => {
         localScore = 0;
         currentLevel++;
-        wrongAnswersInLevel = 0; // Reset wrong answers counter for the new level
+        wrongAnswersInLevel = 0;
         if (currentLevel > levels.length) {
           currentLevel = 1;
         }
         document.getElementById('level').innerHTML = `Level ${currentLevel}`;
-        
-        // Generate a new expression after raising the level
         generateNewExpression();
-      }, 700); // Delay for 0.7 seconds before raising the level
+      }, 700);
     }
 
     if (clickCount >= 5) {
@@ -134,8 +130,6 @@
     }
 
     document.getElementById('scores').innerHTML = `Scores: ${globalScore}`;
-
-    // Update the score bar
     updateScoreBar((localScore / scoresNeededForLevelUp) * 100);
   }
 
@@ -152,14 +146,14 @@
 
   function startToggle(index) {
     const questionMark = document.querySelector(`#expression${index} .question-mark`);
-    questionMark.textContent = '0'; // Initialize to 0
+    questionMark.textContent = '0';
     questionMark.onclick = function() {
-      toggleAnswer();
+      toggleAnswer(index);
     };
   }
 
-  function toggleAnswer() {
-    const questionMark = document.querySelector('.question-mark');
+  function toggleAnswer(index) {
+    const questionMark = document.querySelector(`#expression${index} .question-mark`);
     const currentAnswer = questionMark.textContent;
 
     if (currentAnswer === '0') {
@@ -176,54 +170,59 @@
   }
 
   function checkAnswer() {
-    const expressionText = document.querySelector('.expression').innerText.split('=')[0].trim();
-    const questionMark = document.querySelector('.question-mark');
-    const userAnswer = questionMark.textContent;
-    
-    // Use your expression evaluation script here
-    let convertedExpression = [];
-    for (let i = 0; i < expressionText.length; i++) {
-      if (expressionText[i] === "1") {
-        convertedExpression.push("1");
-      } else if (expressionText[i] === "0") {
-        convertedExpression.push("0");
-      } else if (expressionText[i] === "!") {
-        convertedExpression.push("!");
-      } else if (expressionText[i] === "×" || expressionText[i] === "*") {
-        convertedExpression.push("&&");
-      } else if (expressionText[i] === "+") {
-        convertedExpression.push("||");
-      } else {
-        convertedExpression.push(expressionText[i]);
-      }
-    }
-    let jsLogicalExpression = convertedExpression.join("");
-    let correctAnswer = eval(jsLogicalExpression);
+    let correctAnswers = [];
+    let userAllAnswers = [];
+    for (let i = 1; i <= 3; i++) {
+      const expressionText = document.querySelector(`#expression${i}`).innerText.split('=')[0].trim();
+      const questionMark = document.querySelector(`#expression${i} .question-mark`);
+      const userAnswer = questionMark.textContent;
+      userAllAnswers.push(String(+userAnswer));
 
-    if (userAnswer === String(+correctAnswer)) {
+      let convertedExpression = [];
+      for (let j = 0; j < expressionText.length; j++) {
+        if (expressionText[j] === "1") {
+          convertedExpression.push("1");
+        } else if (expressionText[j] === "0") {
+          convertedExpression.push("0");
+        } else if (expressionText[j] === "!") {
+          convertedExpression.push("!");
+        } else if (expressionText[j] === "×" || expressionText[j] === "*") {
+          convertedExpression.push("&&");
+        } else if (expressionText[j] === "+") {
+          convertedExpression.push("||");
+        } else {
+          convertedExpression.push(expressionText[j]);
+        }
+      }
+      let jsLogicalExpression = convertedExpression.join("");
+      let correctAnswer = eval(jsLogicalExpression);
+      correctAnswers.push(String(+correctAnswer));  
+    }
+
+    if (userAllAnswers.toString() === correctAnswers.toString()) {
       localScore++;
       globalScore++;
     } else {
-      localScore -= 2; // Wrong answer deducts 2 points
-      globalScore -= 2; // Deduct global score on wrong answer
-      localScore = Math.max(0, localScore); // Ensure local score doesn't go below 0
+      localScore -= 2;
+      globalScore -= 2;
+      localScore = Math.max(0, localScore);
+      wrongAnswersInLevel++;
     }
 
-    // Display the updated global score
     document.getElementById('scores').innerHTML = `Scores: ${globalScore}`;
+    updateScoreBar((localScore / scoresNeededForLevelUp) * 100);
 
-    // Check if the user needs to drop down two levels
     if (wrongAnswersInLevel === 3) {
       currentLevel = Math.max(1, currentLevel - 2);
-      localScore = 0; // Reset local score when the level is lowered
+      localScore = 0;
       document.getElementById('level').innerHTML = `Level ${currentLevel}`;
-      wrongAnswersInLevel = 0; // Reset wrong answers counter after dropping down
+      wrongAnswersInLevel = 0;
     }
 
-    // Generate a new expression after checking the answer
     generateNewExpression();
   }
 </script>
+
 
 </body>
 </html>
