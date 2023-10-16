@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Logical Expressions Simulator</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #expression-container {
+      text-align: center;
+      padding: 20px;
+      border: 1px solid #dee2e6;
+      border-radius: 5px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    #expression {
+      font-size: 24px;
+      margin-bottom: 10px;
+      user-select: none; /* Prevent text selection */
+    }
+
+    #level {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    #answer {
+      font-size: 20px;
+      margin-top: 10px;
+    }
+
+    #check-button {
+      font-size: 18px;
+    }
+
+    #levelDown-button {
+      font-size: 18px;
+    }
+
+    #levelUp-button {
+      font-size: 18px;
+    }
+
+    .question-mark {
+      cursor: pointer;
+      color: blue;
+    }
+  </style>
+</head>
+<body>
+
+<div id="expression-container">
+  <div id="expression"></div>
+  <div id="level"></div>
+  <div id="answer"></div>
+  <button id="levelDown-button" class="btn btn-primary" onclick="levelUp()">+</button>
+  <button id="levelUp-button" class="btn btn-primary" onclick="levelDown()">-</button>
+</div>
+
+<script>
+  const levels = [
+    ['11', '11'],
+    ['12', '12'],
+    ['13', '13'],
+    ['14', '14'],
+    ['15', '15'],
+    ['26', '26'],
+    ['37', '37', '37'],
+    ['38', '38', '38'],
+    ['39', '39', '39'],
+    ['401', '402', '403', '404', '405', '406', '407', '408']
+  ];
+
+  const expressionsPerLevel = [1, 1, 1, 1, 1, 2, 3, 3, 3, 4];
+
+  let currentLevel = 1;
+  let clickCount = 0;
+
+  function levelDown() {
+    currentLevel--;
+    if (currentLevel < 1) {
+      currentLevel = 1;
+    }
+    document.getElementById('level').innerHTML = `Level ${currentLevel}`;
+    generateNewExpressions();
+  }
+
+  function levelUp() {
+    currentLevel++;
+    if (currentLevel > levels.length) {
+      currentLevel = 1;
+    }
+    document.getElementById('level').innerHTML = `Level ${currentLevel}`;
+    generateNewExpressions();
+  }
+
+  function generateNewExpressions() {
+    document.getElementById('level').innerHTML = `Level ${currentLevel}`;
+
+    const expressions = levels[currentLevel - 1];
+    const numExpressions = expressionsPerLevel[currentLevel - 1];
+    
+    const selectedExpressions = [];
+    for (let i = 0; i < numExpressions; i++) {
+      const randomIndex = Math.floor(Math.random() * expressions.length);
+      selectedExpressions.push(expressions[randomIndex]);
+    }
+
+    const expressionElements = selectedExpressions.map((expression, index) => {
+      return `${expression} = <span class="question-mark" onclick="startToggle(${index})">?</span>`;
+    });
+
+    document.getElementById('expression').innerHTML = expressionElements.join('<br>');
+    document.getElementById('answer').innerHTML = '';
+  }
+
+  function startToggle(index) {
+    const questionMarks = document.querySelectorAll('.question-mark');
+    questionMarks[index].textContent = '0'; // Initialize to 0
+    questionMarks[index].onclick = function () {
+      toggleAnswer(index);
+    };
+  }
+
+  function toggleAnswer(index) {
+    const questionMarks = document.querySelectorAll('.question-mark');
+    const currentAnswer = questionMarks[index].textContent;
+
+    if (currentAnswer === '0') {
+      questionMarks[index].textContent = '1';
+    } else if (currentAnswer === '1') {
+      questionMarks[index].textContent = '0';
+    }
+  }
+
+  // Initial expressions setup when the page loads
+  generateNewExpressions();
+</script>
+
+</body>
+</html>
