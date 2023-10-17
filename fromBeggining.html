@@ -26,9 +26,9 @@
     }
 
     .expression {
-      font-size: 35px;/* Adjust the font size as needed */
+      font-size: 35px; /* Adjust the font size as needed */
       /* margin-bottom: 10px; */
-      user-select: none;/* Prevent text selection */
+      user-select: none; /* Prevent text selection */
     }
 
     #scores {
@@ -53,8 +53,8 @@
     }
 
     #score-bar {
-      height: 20px;/* Adjust the height as needed */
-      width: 100%;/* Adjust the width as needed */
+      height: 20px; /* Adjust the height as needed */
+      width: 100%; /* Adjust the width as needed */
       border: 1px solid #ddd;
       border-radius: 5px;
       overflow: hidden;
@@ -74,6 +74,8 @@
 <div id="expression-container">
   <div class="expression" id="expression1"></div>
   <div class="expression" id="expression2"></div>
+  <div class="expression" id="expression3"></div>
+  <div class="expression" id="expression4"></div>
 
   <div id="level"></div>
   <div id="scores"></div>
@@ -96,6 +98,8 @@
     [],
     []
   ];
+
+  const expressionsPerLevel = [1, 1, 1, 1, 1, 2, 3, 3, 3, 4];
 
   let currentLevel = 1;
   let clickCount = 0;
@@ -164,19 +168,25 @@
   generateNewExpression();
 
   function generateNewExpression() {
-    clickCount++;    
+    clickCount++;
 
     if (clickCount >= 5) {
       clickCount = 0;
     }
 
-    let expressions;
+    const numExpressionsToShow = expressionsPerLevel[currentLevel - 1];
+    let expressions = [];
+
     if (currentLevel <= 7) {
       const currentLevelExpressions = levels[currentLevel - 1];
-      const randomIndexes = getRandomUniqueIndexes(currentLevelExpressions.length, 2);
-      expressions = [currentLevelExpressions[randomIndexes[0]], currentLevelExpressions[randomIndexes[1]]];
+      const randomIndexes = getRandomUniqueIndexes(currentLevelExpressions.length, numExpressionsToShow);
+      for (const index of randomIndexes) {
+        expressions.push(currentLevelExpressions[index]);
+      }
     } else {
-      expressions = [generateRandomExpression(), generateRandomExpression()];
+      for (let i = 0; i < numExpressionsToShow; i++) {
+        expressions.push(generateRandomExpression());
+      }
     }
 
     document.getElementById('level').innerHTML = `Level: ${currentLevel}`; // Display the current level immediately on first load
@@ -204,7 +214,7 @@
   function startToggle(index) {
     const questionMark = document.querySelector(`#expression${index} .question-mark`);
     questionMark.textContent = '0';
-    questionMark.onclick = function() {
+    questionMark.onclick = function () {
       toggleAnswer(index);
     };
   }
@@ -226,29 +236,31 @@
     scoreFill.style.width = `${Math.min(100, percentage)}%`;
   }
 
-  function checkAnswer() {
+  function checkAnswer() { 
     let correctAnswers = [];
     let userAllAnswers = [];
-    for (let i = 1; i <= 2; i++) {
+    const numExpressionsToShow = expressionsPerLevel[currentLevel - 1];
+
+    for (let i = 1; i <= numExpressionsToShow; i++) {
       const expressionText = document.querySelector(`#expression${i}`).innerText.split('=')[0].trim();
       const questionMark = document.querySelector(`#expression${i} .question-mark`);
       const userAnswer = questionMark.textContent;
       userAllAnswers.push(String(+userAnswer));
 
       let convertedExpression = [];
-      for (let i = 0; i < expressionText.length; i++) {
-        if (expressionText[i] === "1") {
+      for (let j = 0; j < expressionText.length; j++) {
+        if (expressionText[j] === "1") {
           convertedExpression.push("1");
-        } else if (expressionText[i] === "0") {
+        } else if (expressionText[j] === "0") {
           convertedExpression.push("0");
-        } else if (expressionText[i] === "!") {
+        } else if (expressionText[j] === "!") {
           convertedExpression.push("!");
-        } else if (expressionText[i] === "×" || expressionText[i] === "*") {
+        } else if (expressionText[j] === "×" || expressionText[j] === "*") {
           convertedExpression.push("&&");
-        } else if (expressionText[i] === "+") {
+        } else if (expressionText[j] === "+") {
           convertedExpression.push("||");
         } else {
-          convertedExpression.push(expressionText[i]);
+          convertedExpression.push(expressionText[j]);
         }
       }
       let jsLogicalExpression = convertedExpression.join("");
@@ -281,10 +293,10 @@
       updateScoreBar(100);
       isSameLevel = false;
 
-      setTimeout(() => {        
+      setTimeout(() => {
         localScore = 0;
         currentLevel++;
-        wrongAnswersInLevel = 0;        
+        wrongAnswersInLevel = 0;
         if (currentLevel > levels.length) {
           alert("Good Job! You have finished all levels!");
           currentLevel = 1;
@@ -292,8 +304,8 @@
 
         document.getElementById('level').innerHTML = `Level: ${currentLevel}`;
         updateScoreBar(0);
-        generateNewExpression(); 
-      }, 700);           
+        generateNewExpression();
+      }, 700);
     }
 
     // To avoid additional generating of expressions before raising the level.
