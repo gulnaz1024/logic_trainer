@@ -101,12 +101,11 @@
 
   const expressionsPerLevel = [1, 1, 1, 1, 1, 2, 3, 3, 3, 4];
 
-  let currentLevel = 1;
-  let clickCount = 0;
+  let currentLevel = 5;
   let localScore = 0;
   let globalScore = 0;
   let wrongAnswersInLevel = 0;
-  const scoresNeededForLevelUp = 4;
+  const scoresNeededForLevelUp = 1;
 
   function generateRandomExpression() {
     let variables = [];
@@ -168,12 +167,6 @@
   generateNewExpression();
 
   function generateNewExpression() {
-    clickCount++;
-
-    if (clickCount >= 5) {
-      clickCount = 0;
-    }
-
     const numExpressionsToShow = expressionsPerLevel[currentLevel - 1];
     let expressions = [];
 
@@ -188,14 +181,14 @@
         expressions.push(generateRandomExpression());
       }
     }
-
+    
     document.getElementById('level').innerHTML = `Level: ${currentLevel}`; // Display the current level immediately on first load
 
     for (let i = 0; i < expressions.length; i++) {
       const selectedExpression = expressions[i];
       document.getElementById(`expression${i + 1}`).innerHTML = `${selectedExpression} = <span class="question-mark" onclick="startToggle(${i + 1})">?</span>`;
     }
-
+    
     document.getElementById('scores').innerHTML = `Scores: ${globalScore}`;
     updateScoreBar((localScore / scoresNeededForLevelUp) * 100);
   }
@@ -234,6 +227,14 @@
     const scoreBar = document.getElementById('score-bar');
     const scoreFill = document.getElementById('score-fill');
     scoreFill.style.width = `${Math.min(100, percentage)}%`;
+  }
+
+  function clearHigherLevelExpressions() {
+    let currentLevelExpressionsNumber = expressionsPerLevel[currentLevel - 1];
+    let expressionsMaxNumber = 4;
+    for (let i = currentLevelExpressionsNumber; i < expressionsMaxNumber; i++) {
+      document.getElementById(`expression${i+1}`).innerHTML = '';
+    }
   }
 
   function checkAnswer() { 
@@ -285,7 +286,8 @@
       currentLevel = Math.max(1, currentLevel - 2);
       localScore = 0;
       document.getElementById('level').innerHTML = `Level ${currentLevel}`;
-      wrongAnswersInLevel = 0;
+      wrongAnswersInLevel = 0; 
+      сlearHigherLevelExpressions();      
     }
 
     let isSameLevel = true;
@@ -311,7 +313,7 @@
     // To avoid additional generating of expressions before raising the level.
     if (isSameLevel) {
       generateNewExpression();
-    }
+    }  
   }
 </script>
 
