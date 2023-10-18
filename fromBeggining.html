@@ -101,16 +101,16 @@
 
   const expressionsPerLevel = [1, 1, 1, 1, 1, 2, 3, 3, 3, 4];
 
-  let currentLevel = 5;
+  let currentLevel = 9;
   let localScore = 0;
   let globalScore = 0;
   let wrongAnswersInLevel = 0;
   const scoresNeededForLevelUp = 1;
 
-  function generateRandomExpression() {
+  function generateRandomExpression(expressionLength, hasBrackets) {
     let variables = [];
     let operators = [];
-    let expressionLength = 4;
+    // let expressionLength = 4;
 
     let bracketsPresenceProbability = Math.floor(Math.random() * 16); // set to 15 if brackets are not needed
     let openedBracket = -1;
@@ -120,7 +120,7 @@
     for (let i = 0; i < expressionLength; i++) {
       let variable = String(Math.floor(Math.random() * 2));
       let notOperator = Math.floor(Math.random() * 2);
-      if (bracketsPresenceProbability < 11) {
+      if (bracketsPresenceProbability < 11 && hasBrackets) {
         openedBracket = Math.floor(Math.random() * (expressionLength - 1));
         let shiftBracket = 0;
         if (openedBracket === 0) {
@@ -176,9 +176,23 @@
       for (const index of randomIndexes) {
         expressions.push(currentLevelExpressions[index]);
       }
-    } else {
+    } else if (currentLevel === 8) {
+      let expressionLength = 4;
+      let expressionHasBrackets = false;
       for (let i = 0; i < numExpressionsToShow; i++) {
-        expressions.push(generateRandomExpression());
+        expressions.push(generateRandomExpression(expressionLength, expressionHasBrackets));
+      }
+    } else if (currentLevel === 9) {
+      let expressionLength = 5;
+      let expressionHasBrackets = true;
+      for (let i = 0; i < numExpressionsToShow; i++) {
+        expressions.push(generateRandomExpression(expressionLength, expressionHasBrackets));
+      }
+    } else {
+      let expressionLength = 7;
+      let expressionHasBrackets = true;
+      for (let i = 0; i < numExpressionsToShow; i++) {
+        expressions.push(generateRandomExpression(expressionLength, expressionHasBrackets));
       }
     }
     
@@ -287,7 +301,7 @@
       localScore = 0;
       document.getElementById('level').innerHTML = `Level ${currentLevel}`;
       wrongAnswersInLevel = 0; 
-      сlearHigherLevelExpressions();      
+      clearHigherLevelExpressions();      
     }
 
     let isSameLevel = true;
@@ -302,6 +316,7 @@
         if (currentLevel > levels.length) {
           alert("Good Job! You have finished all levels!");
           currentLevel = 1;
+          clearHigherLevelExpressions(); 
         }
 
         document.getElementById('level').innerHTML = `Level: ${currentLevel}`;
