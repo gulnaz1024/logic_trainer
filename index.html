@@ -18,15 +18,15 @@
     #expression-container {
       text-align: center;
       padding: 20px;
-      border: 1px solid #dee2e6;
+      border: 2px solid #dee2e6;
       border-radius: 20px;
       background-color: #fff;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-      width: 450px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+      width: 400px;
     }
 
     .expression {
-      font-size: 35px; /* Adjust the font size as needed */
+      font-size: 28px; /* Adjust the font size as needed */
       /* margin-bottom: 10px; */
       user-select: none; /* Prevent text selection */
       margin-top: 1%;
@@ -196,7 +196,7 @@
       }
     }
     
-    document.getElementById('level').innerHTML = `Level: ${currentLevel}`; // Display the current level immediately on first load
+    document.getElementById('level').innerHTML = `Level: ${currentLevel}/${levels.length}`; // Display the current level immediately on first load
 
     for (let i = 0; i < expressions.length; i++) {
       const selectedExpression = expressions[i];
